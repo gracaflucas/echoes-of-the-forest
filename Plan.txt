@@ -1,0 +1,10 @@
+need to implement x and y (unsigned int, double or float?)
+need to implement movement velocity
+
+movement keys for player ( hold key? single press? )
+different phrases for NPCs
+
+rendering the map
+death animations
+
+update from phases, the poachers IA and the monkeyNPC wander
