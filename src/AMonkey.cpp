@@ -1,4 +1,4 @@
-#include "AMonkey.hpp"
+#include "../include/AMonkey.hpp"
 
 AMonkey::AMonkey() : health(1) {}
 
@@ -28,4 +28,20 @@ unsigned int    AMonkey::getHealth() const {
 void            AMonkey::death() {
     // when touching fire, death by burn
     // when reached by poacher, death by cage
+}
+
+void    AMonkey::setX(int x) {
+    this->x = x;
+}
+
+void    AMonkey::setY(int y) {
+    this->y = y;
+}
+
+int     AMonkey::getX() const {
+    return this->x;
+}
+
+int     AMonkey::getY() const {
+    return this->y;
 }

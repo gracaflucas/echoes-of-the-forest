@@ -7,8 +7,8 @@
 class AMonkey {
     protected:
         unsigned int    health;
-        unsigned int    x; // still need to add x and y
-        unsigned int    y;
+        int    x; // still need to add x and y
+        int    y;
         double          movSpeed;
 
     public:
@@ -21,6 +21,10 @@ class AMonkey {
         unsigned int    getHealth() const;
         void            death();
         virtual void    update() = 0;
+        void            setX(int x);
+        void            setY(int y);
+        int             getX() const;
+        int             getY() const;
 };
 
 #endif

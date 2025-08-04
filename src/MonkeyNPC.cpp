@@ -1,4 +1,4 @@
-#include "MonkeyNPC.hpp"
+#include "../include/MonkeyNPC.hpp"
 
 MonkeyNPC::MonkeyNPC() : AMonkey(), dialogue("...") {}
 

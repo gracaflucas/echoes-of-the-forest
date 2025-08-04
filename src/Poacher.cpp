@@ -1,4 +1,4 @@
-#include "Poacher.hpp"
+#include "../include/Poacher.hpp"
 
 Poacher::Poacher() : monkeyNearBy(0) {}
 
@@ -23,5 +23,6 @@ void    Poacher::searchIA() {
 }
 
 void    Poacher::updateSearchIA(int phase) {
+    (void)phase;
     // changes through phases
 }
