@@ -2,13 +2,17 @@
 
 AMonkey::AMonkey() : health(1) {}
 
-AMonkey::AMonkey(const AMonkey& copy) : health(copy.health) {}
+AMonkey::AMonkey(int x, int y) : health(1), x(x), y(y) {}
+
+AMonkey::AMonkey(const AMonkey& copy) : health(copy.health), x(copy.x), y(copy.y) {}
 
 AMonkey::~AMonkey() {}
 
 AMonkey& AMonkey::operator=(const AMonkey& other) {
     if (this != &other) {
         this->health = other.health;
+        this->x = other.x;
+        this->y = other.y;
     }
     return *this;
 }

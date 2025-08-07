@@ -1,23 +1,35 @@
 #ifndef POACHER_HPP
 # define POACHER_HPP
 
+#include <vector>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include "AMonkey.hpp"
+
 class Poacher {
     private:
-        int             monkeyNearBy;
-        unsigned int    x;
-        unsigned int    y; // still have to implement x and y
-        double          movSpeed;
+        int         monkeyNearby;
+        int         x;
+        int         y;
+        double      movSpeed;
 
     public:
         Poacher();
+        Poacher(int startX, int startY);
         Poacher(const Poacher& copy);
         ~Poacher();
 
         Poacher& operator=(const Poacher& other);
 
-        void    wander();
-        void    searchIA();
-        void    updateSearchIA(int phase);
+        int     getX() const;
+        int     getY() const;
+        void    setX(int x);
+        void    setY(int y);
+
+        void    wanderRandomly(const std::vector<std::string>& map);
+        void    searchIA(const std::vector<std::string>& map, const std::vector<AMonkey*>& monkeys);
+        void    updateIA(int phase, const std::vector<std::string>& map, const std::vector<AMonkey*>& monkeys);
 };
 
 #endif

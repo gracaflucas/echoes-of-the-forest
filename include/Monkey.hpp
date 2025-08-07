@@ -7,19 +7,19 @@
 
 class Monkey : public AMonkey {
     private:
-        unsigned int    bag;
+        std::string name;
 
     public:
         Monkey();
+        Monkey(std::string name);
         Monkey(const Monkey& copy);
         ~Monkey();
 
         Monkey& operator=(const Monkey& other);
 
-        unsigned int    getBag() const;
-        void            setBag(unsigned int amount);
+        std::string getName() const;
         void            handleInput(sf::Keyboard::Key key, const std::vector<std::string>& map);
-        void            update();
+        void            update(const std::vector<std::string>& map);
 };
 
 #endif

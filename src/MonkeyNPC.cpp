@@ -2,6 +2,8 @@
 
 MonkeyNPC::MonkeyNPC() : AMonkey(), dialogue("...") {}
 
+MonkeyNPC::MonkeyNPC(int x, int y) : AMonkey(x, y), dialogue("...") {}
+
 MonkeyNPC::MonkeyNPC(const MonkeyNPC& copy) : AMonkey(copy), dialogue(copy.dialogue) {}
 
 MonkeyNPC::~MonkeyNPC() {}
@@ -22,7 +24,8 @@ void            MonkeyNPC::setDialogue(std::string phrase) {
     this->dialogue = phrase;
 }
 
-void            MonkeyNPC::update() {
+void            MonkeyNPC::update(const std::vector<std::string>& map) {
+    (void)map;
     // wanders randomly at first, then later runs from poachers, but slower than them
     // talks with player when iteracted with / near them
     // dies when touched by Fire or Poacher, different deaths

@@ -9,6 +9,7 @@ class MonkeyNPC : public AMonkey {
 
     public:
         MonkeyNPC();
+        MonkeyNPC(int x, int y);
         MonkeyNPC(const MonkeyNPC& copy);
         ~MonkeyNPC();
 
@@ -16,7 +17,7 @@ class MonkeyNPC : public AMonkey {
 
         std::string     getDialogue() const;
         void            setDialogue(std::string phrase);
-        void            update();
+        void            update(const std::vector<std::string>& map);
 };
 
 #endif

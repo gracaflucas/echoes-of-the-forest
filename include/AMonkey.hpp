@@ -3,16 +3,18 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 class AMonkey {
     protected:
         unsigned int    health;
-        int    x; // still need to add x and y
+        int    x;
         int    y;
         double          movSpeed;
 
     public:
         AMonkey();
+        AMonkey(int x, int y);
         AMonkey(const AMonkey& copy);
         virtual ~AMonkey();
         AMonkey& operator=(const AMonkey& other);
@@ -20,7 +22,8 @@ class AMonkey {
         void            tookDamage(unsigned int amount);
         unsigned int    getHealth() const;
         void            death();
-        virtual void    update() = 0;
+        virtual void    update(const std::vector<std::string>& map) = 0;
+
         void            setX(int x);
         void            setY(int y);
         int             getX() const;
