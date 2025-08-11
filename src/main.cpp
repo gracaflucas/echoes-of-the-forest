@@ -7,6 +7,7 @@
 #include "MonkeyNPC.hpp"
 #include "Poacher.hpp"
 #include "AMonkey.hpp"
+#include "utils.hpp"
 
 // Function to load map lines from file
 std::vector<std::string> loadMap(const std::string& filename) {
@@ -43,6 +44,19 @@ int main() {
     std::vector<std::pair<int,int>> bananas;
     std::vector<std::pair<int,int>> fires;
     int exitX = -1, exitY = -1;
+
+    // Struct to hold tile info (position + char)
+    struct TileInfo {
+        unsigned int x, y;
+        char tileChar;
+    };
+    // Prepare tile info vector for your map
+    std::vector<TileInfo> tileInfos;
+    for (unsigned int y = 0; y < map.size(); ++y) {
+        for (unsigned int x = 0; x < map[y].size(); ++x) {
+            tileInfos.push_back(TileInfo{x, y, map[y][x]});
+        }
+    }
 
     // Scan map to initialize player, NPCs, bananas, exit, poacher, and fires
     for (unsigned int y = 0; y < map.size(); ++y) {
@@ -90,11 +104,6 @@ int main() {
                 player.handleInput(event.key.code, map);
             }
         }
-        // Update all NPCs and player // doing nothing for now
-        // player.update(map);
-        // for (MonkeyNPC& npc : monkeyNPCs) {
-        //     npc.update(map);
-        // }
         // Build AMonkey pointer list for AI hunt
         std::vector<AMonkey*> allMonkeys;
         allMonkeys.push_back(&player);
@@ -104,64 +113,69 @@ int main() {
         if (poacherClock.getElapsedTime().asSeconds() >= poacherMoveInterval) {
             for (auto& poacher : poachers) {
                 poacher.updateIA(2, map, allMonkeys); // switch to current phase
+                for (MonkeyNPC& npc : monkeyNPCs) {
+                    npc.wanderRandomly(map);
+                }
             }
             poacherClock.restart();
         }
         window.clear();
-        // Draw map tiles
-        for (unsigned int y = 0; y < map.size(); ++y) {
-            for (unsigned int x = 0; x < map[y].size(); ++x) {
-                sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
-                tile.setPosition(x * tileSize, y * tileSize);
-                switch (map[y][x]) {
-                    case '1':   tile.setFillColor(sf::Color(139, 69, 19));
-                                break;
-                    case '0':   tile.setFillColor(sf::Color::Green);
-                                break;
-                    case 'E':   tile.setFillColor(sf::Color(255, 165, 0));
-                                break;
-                    case 'F':   tile.setFillColor(sf::Color::Red);
-                                break;
-                    default:    tile.setFillColor(sf::Color::Black);
-                                break;
-                }
-                window.draw(tile);
+        sf::Texture wallTexture, floorTexture, exitTexture, bananaTexture, monkeyTexture;
+
+        auto loadTexture = [](sf::Texture& tex, const std::string& file) {
+            if (!tex.loadFromFile(file)) {
+                std::cerr << "Error loading texture: " << file << "\n";
             }
-        }
-        // Drawing loop for bananas
-        for (auto& b : bananas) {
-            sf::RectangleShape bananaRect(sf::Vector2f(tileSize, tileSize));
-            bananaRect.setPosition(b.first * tileSize, b.second * tileSize);
-            bananaRect.setFillColor(sf::Color::Yellow);
-            window.draw(bananaRect);
-        }
-        // Draw exit
-        if (exitX != -1 && exitY != -1) {
-            sf::RectangleShape exitRect(sf::Vector2f(tileSize, tileSize));
-            exitRect.setPosition(exitX * tileSize, exitY * tileSize);
-            exitRect.setFillColor(sf::Color::Cyan);
-            window.draw(exitRect);
-        }
-        // Draw player
-        sf::RectangleShape playerRect(sf::Vector2f(tileSize, tileSize));
-        playerRect.setPosition(player.getX() * tileSize, player.getY() * tileSize);
-        playerRect.setFillColor(sf::Color::Blue);
-        window.draw(playerRect);
-        // Drawing loop for NPCs
-        for (MonkeyNPC& npc : monkeyNPCs) {
-            sf::RectangleShape npcRect(sf::Vector2f(tileSize, tileSize));
-            npcRect.setPosition(npc.getX() * tileSize, npc.getY() * tileSize);
-            npcRect.setFillColor(sf::Color::Magenta);
-            window.draw(npcRect);
-        }
-        // Drawing loop for poachers
-        for (const Poacher& poacher : poachers) {
+        };
+
+        loadTexture(wallTexture,   "textures/bush.png");
+        loadTexture(floorTexture,  "textures/grass.png");
+        loadTexture(exitTexture,   "textures/dekutree.png");
+        loadTexture(bananaTexture, "textures/banana.png");
+        loadTexture(monkeyTexture, "textures/still.png");
+        // Draw the map base
+        drawSprites(window, tileInfos, tileSize, [&](sf::Sprite& sprite, const TileInfo& tile) {
+            switch (tile.tileChar) {
+                case '1': sprite.setTexture(wallTexture); break;
+                case '0': sprite.setTexture(floorTexture); break;
+                case 'L': sprite.setTexture(exitTexture); break;
+                case 'F': sprite.setTexture(floorTexture); sprite.setColor(sf::Color::Red); break; // fire fallback
+                case 'E': sprite.setTexture(floorTexture); break; // poacher tile base
+                case 'B': sprite.setTexture(floorTexture); break; // banana base tile
+                case 'P': sprite.setTexture(floorTexture); break; // player base tile
+                case 'N': sprite.setTexture(floorTexture); break; // monkeyNPC base tile
+                default:  sprite.setTexture(floorTexture); break;
+            }
+            sprite.setPosition(tile.x * tileSize, tile.y * tileSize);
+        });
+
+        // Bananas
+        drawSprites(window, bananas, tileSize, [&](sf::Sprite& sprite, const std::pair<int,int>& b) {
+            sprite.setTexture(bananaTexture);
+            sprite.setPosition(b.first * tileSize, b.second * tileSize);
+        });
+
+        // Player
+        drawSprite(window, player, tileSize, [&](sf::Sprite& sprite, const auto& p) {
+            sprite.setTexture(monkeyTexture);
+            sprite.setPosition(p.getX() * tileSize, p.getY() * tileSize);
+        });
+
+        // Monkey NPCs
+        drawSprites(window, monkeyNPCs, tileSize, [&](sf::Sprite& sprite, const auto& npc) {
+            sprite.setTexture(monkeyTexture);
+            sprite.setPosition(npc.getX() * tileSize, npc.getY() * tileSize);
+        });
+
+        // Poachers (colored rectangle fallback)
+        for (const auto& poacher : poachers) {
             sf::RectangleShape poacherRect(sf::Vector2f(tileSize, tileSize));
             poacherRect.setPosition(poacher.getX() * tileSize, poacher.getY() * tileSize);
             poacherRect.setFillColor(sf::Color::White);
             window.draw(poacherRect);
         }
-        // Drawing loop for fire
+
+        // Fires (colored rectangle fallback)
         for (const auto& fire : fires) {
             sf::RectangleShape fireRect(sf::Vector2f(tileSize, tileSize));
             fireRect.setPosition(fire.first * tileSize, fire.second * tileSize);

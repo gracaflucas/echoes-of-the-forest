@@ -1,11 +1,13 @@
-need to implement movement velocity
+need to implement movement velocity? or leave as is
+i can also randomly change the time as they walk, not the velocity, just the frequency
 
-movement keys for player ( hold key? single press? )
 different phrases for NPCs
 
-rendering the map
+rendering the map with texture
 death animations
 
 update from phases, the poachers IA and the monkeyNPC wander
 
-pre requisites SFML library installation
+pre requisites SFML library installation on readme.md
+
+make IA wanderRandomly to avoid bumping each other, make Poacher Kill also monkey NPC

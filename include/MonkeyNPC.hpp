@@ -17,6 +17,7 @@ class MonkeyNPC : public AMonkey {
 
         std::string     getDialogue() const;
         void            setDialogue(std::string phrase);
+        void            wanderRandomly(const std::vector<std::string>& map);
         void            update(const std::vector<std::string>& map);
 };
 
